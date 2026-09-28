@@ -9,11 +9,11 @@ n = int(input("Inserisci il secondo numero: "))
 
 def MCD(m,n):
     mcd = 0
-    for i in range(1, math.floor(math.sqrt(n)) + 1):
-        if n % i == 0:
-            if m % (n//i) == 0:
+    for i in range(1, sqrt(n)):
+        if i | n:
+            if n//i | m:
                 return n//i
-        elif m % i == 0:
+        elif i | m:  
             mcd = i
     return m
 

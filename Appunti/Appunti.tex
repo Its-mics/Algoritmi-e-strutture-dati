@@ -1,0 +1,310 @@
+\documentclass[openany,a4paper,12pt]{book}
+
+% --- Lingua e Font ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} 
+\usepackage[italian]{babel}
+\usepackage{lmodern} % Font più nitido in PDF rispetto al default
+\usepackage{microtype} % Migliora spaziature e sillabazione
+
+% --- Colori (Definiti prima per usarli ovunque) ---
+\usepackage[x11names, dvipsnames]{xcolor}
+\definecolor{PoliBlue}{RGB}{0, 45, 114} % Blu accademico elegante
+\definecolor{OpticRed}{RGB}{200, 10, 30} % Rosso "laser" per i link
+\definecolor{ForestGreen}{RGB}{34, 139, 34}
+\definecolor{CodeBack}{RGB}{245, 245, 245}
+\definecolor{BoxGray}{RGB}{248, 249, 250}
+
+% --- Matematica e Fisica ---
+\usepackage{amsmath, amssymb, amsfonts, amsthm}
+\usepackage{mathtools, cancel, bm}
+
+% Non usare physics insieme a siunitx: i due pacchetti definiscono entrambi \qty e generano conflitti.
+% Per le unità di misura usa solo siunitx.
+\usepackage{siunitx}
+\sisetup{
+    output-decimal-marker={,},
+    separate-uncertainty=true, % Per scrivere (10,5 ± 0,1) m
+    per-mode=symbol, % Scrive m/s invece di m s^{-1}
+    inter-unit-product = \ensuremath{{}\cdot{}} % Punto tra le unità
+}
+
+% --- Formattazione Testo e Layout ---
+\usepackage{ragged2e}
+\usepackage{quoting}
+\usepackage{booktabs} % Per tabelle professionali
+\usepackage{enumitem}
+\usepackage{array, tabularx}
+\usepackage[a4paper, margin=2.5cm, headheight=15pt]{geometry} 
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.75em}
+\usepackage{placeins}
+
+% --- Titoli di Sezione (Stile Libro Universitario Moderno) ---
+\usepackage{titlesec}
+\titleformat{\chapter}[display]
+  {\normalfont\bfseries\color{PoliBlue}}{\filleft\Huge\thechapter}{2ex}
+  {\titlerule\vspace{2ex}\Huge\filleft}
+  [\vspace{2ex}\titlerule]
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{PoliBlue}}{\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{PoliBlue}}{\thesubsection}{1em}{}
+
+% --- Grafica, TikZ e Plot ---
+\usepackage{graphicx}
+\usepackage{float} 
+\usepackage{circuitikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{subcaption} 
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usetikzlibrary{positioning, arrows.meta, angles, quotes, trees, patterns, calc}
+
+\pgfplotsset{
+    standard/.style={
+        axis lines=middle,
+        xlabel={$t$}, ylabel={$y$},
+        grid=both,
+        grid style={line width=.1pt, draw=gray!20},
+        major grid style={line width=.2pt, draw=gray!40},
+        samples=100,
+        enlargelimits=true,
+        label style={font=\small},
+        tick label style={font=\tiny}
+    }
+}
+
+% --- Box ed Evidenziazioni (Tcolorbox) ---
+\usepackage[most]{tcolorbox}
+
+% Stile per le Note (si spezzano se a fine pagina)
+\newtcolorbox{nota}[1][]{
+  enhanced, breakable,
+  left=1em, right=1em, top=1ex, bottom=1ex,
+  colback=BoxGray, colframe=gray!50,
+  borderline west={3pt}{0pt}{gray},
+  fontupper=\itshape,
+  title={\textbf{Nota}}, coltitle=black, attach title to upper={\quad},
+  #1
+}
+
+% Stile per le Definizioni
+\newtcolorbox{definizione}[1][]{
+  enhanced, breakable,
+  left=1em, right=1em, top=1ex, bottom=1ex,
+  colback=PoliBlue!5, colframe=PoliBlue!80,
+  borderline west={3pt}{0pt}{PoliBlue},
+  title={\textbf{Definizione}}, coltitle=PoliBlue!80!black, attach title to upper={\quad},
+  #1
+}
+
+% Stile per i Teoremi/Formule importanti
+\newtcbtheorem[no counter]{teorema}{Teorema}%
+{enhanced, breakable, colback=OpticRed!5, colframe=OpticRed, fonttitle=\bfseries}{th}
+
+% --- Configurazione LISTINGS (Python per Analisi Dati) ---
+\usepackage{listings}
+\lstset{
+    language=Python,
+    backgroundcolor=\color{CodeBack},
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{PoliBlue}\bfseries,
+    stringstyle=\color{OpticRed},
+    commentstyle=\color{ForestGreen}\itshape,
+    numberstyle=\tiny\color{gray},
+    numbers=left,
+    numbersep=10pt,
+    frame=leftline,
+    framerule=2pt,
+    rulecolor=\color{PoliBlue!50},
+    showspaces=false,
+    showstringspaces=false,
+    breaklines=true,
+    breakatwhitespace=false,
+    columns=fullflexible, % Permette un copia-incolla perfetto dal PDF
+    keepspaces=true,
+    literate={à}{{\`a}}1 {è}{{\`e}}1 {ì}{{\`i}}1 {ò}{{\`o}}1 {ù}{{\`u}}1 {±}{{$\pm$}}1
+}
+
+% --- Intestazioni e Piè di Pagina ---
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter.\ #1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection.\ #1}}
+\fancyhead[LE]{\small\textbf{\nouppercase{\leftmark}}} % Capitolo a sx (pagine pari)
+\fancyhead[RO]{\small\textbf{\nouppercase{\rightmark}}} % Sezione a dx (pagine dispari)
+\fancyfoot[C]{\small\textbf{\thepage}}
+
+\fancypagestyle{plain}{%
+    \fancyhf{}%
+    \renewcommand{\headrulewidth}{0pt}%
+    \fancyfoot[C]{\small\textbf{\thepage}}%
+}
+
+% --- Link e Indici (DEVE ESSERE L'ULTIMO PACCHETTO) ---
+\usepackage{hyperref}
+\usepackage[italian]{cleveref}
+\usepackage{bookmark}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=PoliBlue, 
+    urlcolor=OpticRed,
+    citecolor=ForestGreen,
+    pdftitle={Appunti di Algoritmi e Strutture Dati},
+    pdfauthor={Autore}
+}
+
+\begin{document}
+
+\chapter{Introduzione agli Algoritmi}
+
+\section{Cos'è un Algoritmo?}
+
+\begin{definizione}
+Una \textbf{procedura computazionale ben definita} che prende un valore (o un insieme di valori) come \textit{input} e produce un valore (o un insieme di valori) come \textit{output}.
+\end{definizione}
+
+Un algoritmo è quindi un insieme di operazioni non ambigue che trasformano un dato di ingresso nel risultato desiderato. Può essere paragonato, a livello concettuale, alle istruzioni contenute nel manuale di un set Lego o ai passaggi di una ricetta di cucina: una sequenza di passi meccanici eseguiti in un ordine specifico.
+
+\subsection*{Un Esempio: L'Ordinamento}
+
+Uno dei problemi classici dell'informatica è l'ordinamento (o \textit{sorting}). Consideriamo l'esempio di ordinare un mazzo di carte mescolato.
+
+\begin{itemize}
+    \item \textbf{Input:} Un mazzo di carte non necessariamente ordinate (una sequenza di dati).
+    \item \textbf{Output:} Una permutazione del mazzo fornito in input, in cui tutte le carte sono disposte in ordine crescente.
+\end{itemize}
+
+Ci serve una procedura meccanica per passare dall'input all'output. 
+
+\subsubsection*{Idea: Inserimento di una carta alla volta (Insertion Sort)}
+
+Possiamo dividere logicamente le carte in due gruppi: \textit{Carte Ordinate} e \textit{Carte Non Ordinate}. L'algoritmo procede nel modo seguente:
+
+\begin{enumerate}
+    \item Inizialmente, la lista delle carte ordinate è vuota (non si hanno carte ordinate).
+    \item Finché rimangono carte non ordinate:
+    \begin{enumerate}[label=\arabic*.\arabic*]
+        \item Prendi una carta dalla lista di carte non ordinate e chiamala $X$.
+        \item Metti $X$ in fondo alla lista delle carte ordinate.
+        \item \textbf{Finché} la carta che precede $X$ ha valore maggiore del valore di $X$, \textbf{scambia} $X$ con la carta che lo precede.
+    \end{enumerate}
+\end{enumerate}
+
+\begin{nota}
+Quando siamo riusciti ad ottenere un mazzo ordinato, per valutare la validità dell'algoritmo progettato, rimangono due domande fondamentali a cui rispondere:
+\begin{itemize}
+    \item \textbf{Correttezza:} questo algoritmo funziona con \textit{ogni} input possibile?
+    \item \textbf{Efficienza:} quanti passi ci mettiamo ad ordinare un mazzo di $n$ carte, al crescere di $n$?
+\end{itemize}
+\end{nota}
+
+\subsubsection*{Analisi intuitiva dell'efficienza}
+Quante comparazioni dobbiamo fare nel caso peggiore? Inserire \textit{una singola carta} nella lista delle carte ordinate richiede non più di $n$ comparazioni (dove $n$ è il numero di carte già in ordine). Siccome dobbiamo inserire $n$ carte per ordinarle tutte, il numero totale di comparazioni è limitato superiormente da $\mathbf{n^2}$.
+
+% -----------------------------------------------------------
+
+\section{L'Importanza dell'Efficienza (Efficiency Matters)}
+
+L'efficienza diventa un concetto cruciale quando la dimensione dell'input cresce. Questo principio è evidente se analizziamo il problema della ricerca del \textbf{Massimo Comune Divisore (MCD)}.
+
+\begin{itemize}
+    \item \textbf{Input:} due numeri interi $m$ ed $n$, con $m > n$.
+    \item \textbf{Output:} il più grande intero che divide entrambi senza lasciare resto.
+\end{itemize}
+
+\subsubsection*{Approccio 1: Algoritmo Ingenuo}
+Una prima idea potrebbe essere quella di provare tutti i possibili divisori, partendo dal più grande al più piccolo. 
+
+\begin{lstlisting}
+def MCD_ingenuo(m, n): 
+    mcd = 0 
+    for i in range(1, math.floor(math.sqrt(n)) + 1): 
+        if n % i == 0: 
+            if m % (n//i) == 0: 
+                return n//i 
+            elif m % i == 0:
+                mcd = i 
+    return mcd 
+\end{lstlisting}
+
+La \textbf{complessità} di questo algoritmo è problematica: nel caso peggiore fa iterazioni del ciclo proporzionali a $\sqrt{n}$. Se testiamo l'algoritmo con un input crittografico come $n = 2^{100}$, serviranno circa $\sim 2^{50}$ operazioni. Un tempo computazionalmente inaccettabile.
+
+\begin{nota}[title={Perché ci fermiamo a $\sqrt{n}$? L'intuizione matematica}]
+I divisori di un numero viaggiano sempre in \textbf{coppie}. \\
+Prendiamo $n = 36$. Le coppie di numeri interi che moltiplicati danno 36 sono:
+\[ (1, 36), \ (2, 18), \ (3, 12), \ (4, 9), \ (6, 6) \]
+Come si nota, in ogni coppia c'è sempre un numero "piccolo" e uno "grande". Il numero piccolo non supera mai la radice quadrata del numero stesso ($\sqrt{36} = 6$). 
+
+Se esistesse una coppia in cui \textit{entrambi} i numeri sono maggiori di $6$ (es. $7 \times 7 = 49$), il loro prodotto supererebbe $36$, il che è impossibile! \\
+Quindi, per trovare \textbf{tutti} i divisori di $n$, basta cercare i numeri $i$ da $1$ fino a $\sqrt{n}$. Una volta trovato il numero piccolo $i$, il suo "compagno grande" si trova banalmente calcolando $n / i$.
+\end{nota}
+
+\subsubsection*{Approccio 2: L'Algoritmo di Euclide}
+Si basa su un'intuizione: \textit{Se un numero divide sia $m$ che $n$, allora deve dividere per forza anche la loro differenza e, di conseguenza, il loro resto.}
+
+\textbf{Esempio Pratico:}
+Vogliamo trovare il MCD tra 1071 e 462.
+\begin{enumerate}
+    \item Dividiamo il grande (1071) per il piccolo (462). Il quoziente è 2, ma a noi interessa il \textbf{resto}, che è $147$. Euclide ci dice che $MCD(1071, 462)$ è uguale a $MCD(462, 147)$. 
+    \item Ripetiamo: dividiamo 462 per 147. Il resto è $21$. Ora il problema è $MCD(147, 21)$.
+    \item Ripetiamo: dividiamo 147 per 21. Il resto è $\mathbf{0}$! 
+    \item Quando il resto è zero, significa che l'ultimo divisore usato (\textbf{21}) è il nostro Massimo Comune Divisore.
+\end{enumerate}
+
+\begin{teorema}{Proprietà di Euclide per il MCD}{euclide_prop}
+Data la divisione $m = q \cdot n + r$ (dove $r$ è il resto):
+\begin{itemize}
+    \item Se $r = 0$, allora $n \mid m$ e l'algoritmo termina: il MCD è $n$.
+    \item Se $r \neq 0$, vale l'identità: $\mathbf{MCD(m, n) = MCD(n, r)}$.
+\end{itemize}
+\end{teorema}
+
+Tradotto in codice Python:
+
+\begin{lstlisting}
+def Euclide(m, n): 
+    while n != 0:          # Fino a quando il resto non e' zero...
+        vecchio_n = n      
+        resto = m % n      # Calcolo il resto della divisione
+        m = vecchio_n      # Il vecchio divisore diventa il nuovo 'm'
+        n = resto          # Il resto diventa il nuovo divisore 'n'
+        
+    return m
+\end{lstlisting}
+
+\subsubsection*{Perché Euclide è incredibilmente veloce?}
+L'algoritmo non sottrae semplicemente un numero dall'altro, ma prende i \textit{resti}. Questo fa sì che i numeri collassino (si rimpiccioliscano) molto velocemente. Dimostriamolo matematicamente:
+
+\begin{enumerate}
+    \item Partiamo dall'equazione della divisione: $m = q \cdot n + r$.
+    \item Poiché $m > n$, il quoziente $q$ sarà come minimo $1$ ($q \ge 1$).
+    \item Per le regole base della divisione, il divisore deve essere strettamente maggiore del resto: $n > r$.
+    \item Sostituiamo queste due verità ( $q \ge 1$ e $n > r$ ) nell'equazione di partenza:
+    \[ m = q \cdot n + r \ge 1 \cdot r + r = 2r \]
+    \item Ne deduciamo che $m \ge 2r$, ovvero girando la disequazione: $\mathbf{r \le \frac{m}{2}}$.
+\end{enumerate}
+
+\begin{nota}[title={Risultato sulle prestazioni}]
+La formula $r \le m/2$ ci dice che: \textbf{ogni due passaggi dell'algoritmo, il numero in input diventa meno della metà}. \\
+Di conseguenza, il numero massimo di passi prima di arrivare a zero è logaritmico, precisamente limitato da $\mathbf{2 \log_2 m}$.
+
+Riprendendo l'esempio critico con $m = 2^{100}$:
+\begin{itemize}
+    \item \textbf{Approccio ingenuo:} richiede circa $2^{50}$ cicli.
+    \item \textbf{Euclide:} esegue al massimo $2 \cdot \log_2(2^{100}) = 2 \cdot 100 =$ \textbf{200 passaggi}.
+la formula $r \le m/2$ ci dice che \textbf{ogni due passaggi dell'algoritmo, il numero in input diventa meno della metà}. 
+
+Per definizione matematica, il numero di volte in cui un valore può essere diviso per due è esattamente il suo \textbf{logaritmo in base 2} ($\log_2 m$).
+
+Siccome questo dimezzamento avviene ogni $2$ iterazioni, il numero totale massimo di passi sarà esattamente $\mathbf{2 \cdot \log_2 m}$.\\
+\\
+\end{itemize}
+\end{nota}
+
+
+\end{document}
